@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>在线募捐偏好实验模拟平台</title>
+
+  <style>
+    :root {
+      --bg-start: #eef9ff;
+      --bg-end: #87cefa;
+      --selected: #87cefa;
+      --button-text: white;
+      --normal-button: #eeeeee;
+      --feedback: #6f8fa6;
+      --text-main: #1f2d3d;
+      --text-muted: #5d6d7e;
+      --card-bg: rgba(255, 255, 255, 0.88);
+      --border: rgba(255, 255, 255, 0.9);
+      --shadow: rgba(31, 45, 61, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+      background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+      color: var(--text-main);
+    }
+
+    .page {
+      width: min(1080px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 36px 0 60px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: 0.04em;
+    }
+
+    .condition-badge {
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.75);
+      font-size: 13px;
+      color: var(--text-muted);
+      box-shadow: 0 8px 20px var(--shadow);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: stretch;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: 0 18px 45px var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .hero-card {
+      min-height: 420px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .tag {
+      display: inline-block;
+      width: fit-content;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(135, 206, 250, 0.25);
+      color: #2c7ca6;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 56px);
+      line-height: 1.06;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      margin: 18px 0 0;
+      color: var(--text-muted);
+      font-size: 17px;
+      line-height: 1.75;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 13px 20px;
+      cursor: pointer;
+      font-weight: 800;
+      transition: 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--selected);
+      color: var(--button-text);
+      box-shadow: 0 10px 24px rgba(135, 206, 250, 0.45);
+    }
+
+    .btn-secondary {
+      background: var(--normal-button);
+      color: var(--text-main);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .image-panel {
+      min-height: 420px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.88)),
+        radial-gradient(circle at 30% 20%, #ffffff 0, transparent 36%),
+        linear-gradient(135deg, #dff5ff, #9bdcff);
+    }
+
+    .illustration {
+      height: 220px;
+      border-radius: 26px;
+      background:
+        radial-gradient(circle at 30% 45%, #ffffff 0 8%, transparent 9%),
+        radial-gradient(circle at 70% 42%, #ffffff 0 7%, transparent 8%),
+        linear-gradient(145deg, rgba(135, 206, 250, 0.9), rgba(238, 249, 255, 0.95));
+      border: 1px solid rgba(255,255,255,0.85);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .illustration::before {
+      content: "";
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.7);
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -40%);
+    }
+
+    .illustration::after {
+      content: "HELP";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -20%);
+      font-size: 34px;
+      font-weight: 900;
+      color: #87cefa;
+      letter-spacing: 0.08em;
+    }
+
+    .image-caption {
+      margin-top: 18px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      font-size: 15px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .stat {
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(255,255,255,0.86);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 12px 30px var(--shadow);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 30px;
+      margin-bottom: 6px;
+    }
+
+    .stat span {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .section {
+      margin-bottom: 24px;
+    }
+
+    .section h2 {
+      margin: 0 0 14px;
+      font-size: 28px;
+      letter-spacing: -0.03em;
+    }
+
+    .section-note {
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin: 0 0 20px;
+    }
+
+    .progress-box {
+      margin-top: 18px;
+    }
+
+    .progress-row {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .progress {
+      width: 100%;
+      height: 18px;
+      background: #dceef8;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 82%;
+      height: 100%;
+      background: var(--selected);
+      border-radius: 999px;
+    }
+
+    .completion-tip {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(135, 206, 250, 0.22);
+      color: #2f7fa8;
+      font-weight: 700;
+      line-height: 1.55;
+    }
+
+    .proof-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .proof-item {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(238, 249, 255, 0.85);
+      border: 1px solid rgba(255,255,255,0.9);
+    }
+
+    .proof-item strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .proof-item span {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .amount-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .amount-btn {
+      min-height: 118px;
+      border: 0;
+      border-radius: 22px;
+      background: var(--normal-button);
+      color: var(--text-main);
+      cursor: pointer;
+      padding: 18px;
+      text-align: left;
+      transition: 0.2s ease;
+    }
+
+    .amount-btn:hover {
+      transform: translateY(-3px);
+    }
+
+    .amount-btn.selected {
+      background: var(--selected);
+      color: var(--button-text);
+      box-shadow: 0 12px 26px rgba(135, 206, 250, 0.52);
+    }
+
+    .amount-btn strong {
+      display: block;
+      font-size: 26px;
+      margin-bottom: 8px;
+    }
+
+    .amount-btn span {
+      font-size: 14px;
+      line-height: 1.5;
+      opacity: 0.9;
+    }
+
+    .custom-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    input[type="number"],
+    input[type="text"] {
+      width: 100%;
+      border: 1px solid rgba(135, 206, 250, 0.6);
+      border-radius: 18px;
+      padding: 13px 15px;
+      outline: none;
+      font: inherit;
+      background: rgba(255,255,255,0.86);
+    }
+
+    input[type="number"]:focus,
+    input[type="text"]:focus {
+      border-color: var(--selected);
+      box-shadow: 0 0 0 4px rgba(135, 206, 250, 0.18);
+    }
+
+    .privacy-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .chip {
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 16px;
+      background: var(--normal-button);
+      color: var(--text-main);
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .chip.selected {
+      background: var(--selected);
+      color: white;
+    }
+
+    .feedback {
+      margin-top: 12px;
+      color: var(--feedback);
+      font-size: 14px;
+      font-weight: 700;
+      min-height: 22px;
+    }
+
+    .questionnaire {
+      display: none;
+    }
+
+    .question {
+      padding: 18px 0;
+      border-bottom: 1px solid rgba(31,45,61,0.08);
+    }
+
+    .question:last-child {
+      border-bottom: 0;
+    }
+
+    .question p {
+      margin: 0 0 12px;
+      font-weight: 700;
+    }
+
+    .scale {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+
+    .scale button {
+      border: 0;
+      border-radius: 14px;
+      background: var(--normal-button);
+      padding: 10px 0;
+      cursor: pointer;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .scale button.selected {
+      background: var(--selected);
+      color: var(--button-text);
+    }
+
+    .result-box {
+      display: none;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(255,255,255,0.9);
+      border-radius: 18px;
+      padding: 18px;
+      color: #263849;
+      line-height: 1.6;
+      max-height: 280px;
+      overflow: auto;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--text-muted);
+      margin-top: 28px;
+      font-size: 13px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(31,45,61,0.35);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal.open {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(520px, 100%);
+      background: rgba(255,255,255,0.96);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: 0 24px 70px rgba(31,45,61,0.22);
+    }
+
+    .modal-card h3 {
+      margin: 0 0 10px;
+      font-size: 28px;
+    }
+
+    .modal-card p {
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin: 0 0 20px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 860px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .grid,
+      .proof-list,
+      .amount-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .scale {
+        grid-template-columns: repeat(7, minmax(32px, 1fr));
+      }
+
+      .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <div class="top-bar">
+      <div class="logo">HopeLab 募捐偏好实验平台</div>
+      <div class="condition-badge" id="conditionBadge">实验版本加载中...</div>
+    </div>
+
+    <section class="hero">
+      <div class="card hero-card">
+        <div>
+          <span class="tag">模拟众筹页面 · 非真实支付</span>
+          <h1>帮小明完成下一阶段康复治疗</h1>
+          <p class="subtitle">
+            小明今年 11 岁，因意外受伤需要进行持续康复训练。当前治疗已进入关键阶段，
+            本页面用于研究不同募捐页面设计如何影响用户的捐赠偏好。
+          </p>
+        </div>
+
+        <div class="hero-actions">
+          <button class="btn btn-primary" onclick="scrollToDonate()">开始模拟捐赠</button>
+          <button class="btn btn-secondary" onclick="scrollToProof()">查看项目信息</button>
+        </div>
+      </div>
+
+      <div class="card image-panel">
+        <div class="illustration"></div>
+        <p class="image-caption">
+          页面采用积极、温和的康复意象，避免过度悲情化呈现。实验中不会产生真实付款。
+        </p>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="stat">
+        <strong>¥58,829</strong>
+        <span>当前已筹金额</span>
+      </div>
+      <div class="stat">
+        <strong>82%</strong>
+        <span>目标完成进度</span>
+      </div>
+      <div class="stat">
+        <strong>127</strong>
+        <span>已有支持者</span>
+      </div>
+    </section>
+
+    <section class="card section" id="progressSection">
+      <h2>筹款进度</h2>
+      <p class="section-note" id="progressText">
+        当前项目已筹集 ¥58,829，目标金额为 ¥71,425。
+      </p>
+
+      <div class="progress-box">
+        <div class="progress-row">
+          <span>已筹 ¥58,829</span>
+          <span>目标 ¥71,425</span>
+        </div>
+        <div class="progress">
+          <div class="progress-fill"></div>
+        </div>
+        <div id="completionTip" class="completion-tip" style="display:none;"></div>
+      </div>
+    </section>
+
+    <section class="card section" id="proofSection">
+      <h2>项目信息与证明材料</h2>
+      <p class="section-note">
+        以下信息用于帮助参与者判断项目可信度。所有内容均为实验模拟材料。
+      </p>
+
+      <div class="proof-list">
+        <div class="proof-item">
+          <strong>身份核验</strong>
+          <span>发起人与受助者关系已核验，平台记录完整。</span>
+        </div>
+        <div class="proof-item">
+          <strong>治疗说明</strong>
+          <span>康复训练、复诊交通、基础药物为当前主要支出。</span>
+        </div>
+        <div class="proof-item">
+          <strong>资金用途</strong>
+          <span>预计用于后续 30 天康复支持与家庭照护补贴。</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card section" id="donateSection">
+      <h2>请选择你的模拟捐赠金额</h2>
+      <p class="section-note" id="amountIntro">
+        请选择一个你愿意支持的金额。本实验不会产生真实付款。
+      </p>
+
+      <div class="amount-grid" id="amountGrid"></div>
+
+      <div class="custom-row">
+        <input type="number" id="customAmount" placeholder="也可以输入自定义金额，例如 80" min="1" />
+        <button class="btn btn-secondary" onclick="selectCustomAmount()">使用自定义金额</button>
+      </div>
+
+      <div>
+        <h2 style="margin-top: 28px;">隐私选择</h2>
+        <p class="section-note">请选择如果真实捐赠时，你更希望如何展示自己的捐赠信息。</p>
+
+        <div class="privacy-options">
+          <button class="chip selected" data-privacy="anonymous" onclick="selectPrivacy(this)">匿名捐赠</button>
+          <button class="chip" data-privacy="nameOnly" onclick="selectPrivacy(this)">只显示姓名</button>
+          <button class="chip" data-privacy="nameAmount" onclick="selectPrivacy(this)">显示姓名和金额</button>
+        </div>
+      </div>
+
+      <p class="feedback" id="amountFeedback">当前默认选择：¥100</p>
+
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="openConfirmModal()">确认模拟捐赠</button>
+        <button class="btn btn-secondary" onclick="resetChoice()">重新选择</button>
+      </div>
+    </section>
+
+    <section class="card section questionnaire" id="questionnaire">
+      <h2>页面评价问卷</h2>
+      <p class="section-note">
+        请根据你刚才浏览页面时的真实感受作答。1 = 非常不同意，7 = 非常同意。
+      </p>
+
+      <div id="questionList"></div>
+
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="submitQuestionnaire()">提交问卷并生成数据</button>
+      </div>
+
+      <p class="feedback" id="questionnaireFeedback"></p>
+    </section>
+
+    <section class="card section result-box" id="resultBox">
+      <h2>实验数据已生成</h2>
+      <p class="section-note">
+        下面是本次参与者的一行数据。你可以下载 CSV，后续把多名参与者的数据合并起来分析。
+      </p>
+
+      <pre id="jsonPreview"></pre>
+
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="downloadCSV()">下载 CSV 数据</button>
+        <button class="btn btn-secondary" onclick="restartExperiment()">重新开始一次实验</button>
+      </div>
+    </section>
+
+    <p class="footer-note">
+      本网页为课程研究/实验模拟平台，仅用于研究页面设计与募捐偏好，不涉及真实支付。
+    </p>
+  </main>
+
+  <div class="modal" id="confirmModal">
+    <div class="modal-card">
+      <h3>确认模拟捐赠</h3>
+      <p id="confirmText">
+        你选择了 ¥100。本操作只是实验模拟，不会产生真实支付。
+      </p>
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeConfirmModal()">返回修改</button>
+        <button class="btn btn-primary" onclick="confirmDonation()">确认并进入问卷</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const startTime = Date.now();
+
+    const conditions = {
+      1: {
+        name: "A：纯金额 × 普通进度",
+        amountMode: "money",
+        progressMode: "normal"
+      },
+      2: {
+        name: "B：纯金额 × 完成提示",
+        amountMode: "money",
+        progressMode: "completion"
+      },
+      3: {
+        name: "C：具体帮助单位 × 普通进度",
+        amountMode: "unit",
+        progressMode: "normal"
+      },
+      4: {
+        name: "D：具体帮助单位 × 完成提示",
+        amountMode: "unit",
+        progressMode: "completion"
+      }
+    };
+
+    const amountOptions = [
+      {
+        amount: 50,
+        moneyText: "支持 ¥50",
+        unitText: "¥50",
+        unitDesc: "可支持一天基础药物"
+      },
+      {
+        amount: 100,
+        moneyText: "支持 ¥100",
+        unitText: "¥100",
+        unitDesc: "可支持一次复诊交通"
+      },
+      {
+        amount: 200,
+        moneyText: "支持 ¥200",
+        unitText: "¥200",
+        unitDesc: "可支持一周康复训练"
+      },
+      {
+        amount: 500,
+        moneyText: "支持 ¥500",
+        unitText: "¥500",
+        unitDesc: "可支持阶段性综合治疗"
+      }
+    ];
+
+    const questions = [
+      {
+        id: "donation_intention",
+        text: "如果这是一个真实项目，我愿意为它捐款。"
+      },
+      {
+        id: "chosen_confidence",
+        text: "我对自己选择的捐赠金额感到合适。"
+      },
+      {
+        id: "perceived_impact",
+        text: "我觉得自己的捐赠能够产生实际帮助。"
+      },
+      {
+        id: "trust",
+        text: "我认为这个众筹项目是真实可信的。"
+      },
+      {
+        id: "empathy",
+        text: "我对受助者产生了同情或关心。"
+      },
+      {
+        id: "information_clarity",
+        text: "这个页面的信息清晰、具体、容易理解。"
+      },
+      {
+        id: "perceived_manipulation",
+        text: "我觉得这个页面有明显诱导我捐更多的感觉。"
+      }
+    ];
+
+    let conditionId = getConditionId();
+    let condition = conditions[conditionId];
+
+    let selectedAmount = 100;
+    let selectedPrivacy = "anonymous";
+    let confirmedDonation = false;
+    let questionnaireAnswers = {};
+    let finalData = null;
+
+    function getConditionId() {
+      const params = new URLSearchParams(window.location.search);
+      const c = Number(params.get("c"));
+
+      if ([1, 2, 3, 4].includes(c)) {
+        return c;
+      }
+
+      return Math.floor(Math.random() * 4) + 1;
+    }
+
+    function init() {
+      document.getElementById("conditionBadge").textContent = condition.name;
+
+      renderProgress();
+      renderAmountButtons();
+      renderQuestions();
+
+      saveEvent("page_loaded");
+    }
+
+    function renderProgress() {
+      const progressText = document.getElementById("progressText");
+      const completionTip = document.getElementById("completionTip");
+
+      if (condition.progressMode === "completion") {
+        progressText.textContent = "当前项目已完成 82%，距离目标只差 ¥12,596。你的捐赠可能帮助项目更接近完成。";
+        completionTip.style.display = "block";
+        completionTip.textContent = "完成提示：如果更多人继续支持，小明就能更快进入下一阶段康复治疗。你的一次选择可能成为补齐缺口的一部分。";
+      } else {
+        progressText.textContent = "当前项目已筹集 ¥58,829，目标金额为 ¥71,425。页面展示当前筹款进度与支持人数。";
+        completionTip.style.display = "none";
+      }
+    }
+
+    function renderAmountButtons() {
+      const amountGrid = document.getElementById("amountGrid");
+      amountGrid.innerHTML = "";
+
+      amountOptions.forEach(option => {
+        const btn = document.createElement("button");
+        btn.className = "amount-btn";
+        btn.dataset.amount = option.amount;
+
+        if (option.amount === selectedAmount) {
+          btn.classList.add("selected");
+        }
+
+        if (condition.amountMode === "unit") {
+          btn.innerHTML = `
+            <strong>${option.unitText}</strong>
+            <span>${option.unitDesc}</span>
+          `;
+        } else {
+          btn.innerHTML = `
+            <strong>${option.moneyText}</strong>
+            <span>选择这一金额进行模拟捐赠</span>
+          `;
+        }
+
+        btn.onclick = () => selectAmount(option.amount);
+        amountGrid.appendChild(btn);
+      });
+    }
+
+    function selectAmount(amount) {
+      selectedAmount = amount;
+      document.getElementById("customAmount").value = "";
+      renderAmountButtons();
+
+      document.getElementById("amountFeedback").textContent = `你当前选择了：¥${selectedAmount}`;
+      saveEvent("amount_selected");
+    }
+
+    function selectCustomAmount() {
+      const value = Number(document.getElementById("customAmount").value);
+
+      if (!value || value <= 0) {
+        document.getElementById("amountFeedback").textContent = "请输入一个有效的自定义金额。";
+        return;
+      }
+
+      selectedAmount = value;
+
+      document.querySelectorAll(".amount-btn").forEach(btn => {
+        btn.classList.remove("selected");
+      });
+
+      document.getElementById("amountFeedback").textContent = `你当前选择了自定义金额：¥${selectedAmount}`;
+      saveEvent("custom_amount_selected");
+    }
+
+    function selectPrivacy(el) {
+      document.querySelectorAll(".chip").forEach(chip => {
+        chip.classList.remove("selected");
+      });
+
+      el.classList.add("selected");
+      selectedPrivacy = el.dataset.privacy;
+
+      document.getElementById("amountFeedback").textContent = `隐私选择已更新：${privacyLabel(selectedPrivacy)}；当前金额：¥${selectedAmount}`;
+      saveEvent("privacy_selected");
+    }
+
+    function privacyLabel(value) {
+      const map = {
+        anonymous: "匿名捐赠",
+        nameOnly: "只显示姓名",
+        nameAmount: "显示姓名和金额"
+      };
+      return map[value] || value;
+    }
+
+    function openConfirmModal() {
+      document.getElementById("confirmText").textContent =
+        `你选择了 ¥${selectedAmount}，隐私设置为“${privacyLabel(selectedPrivacy)}”。本操作只是实验模拟，不会产生真实支付。`;
+
+      document.getElementById("confirmModal").classList.add("open");
+      saveEvent("confirm_modal_opened");
+    }
+
+    function closeConfirmModal() {
+      document.getElementById("confirmModal").classList.remove("open");
+      saveEvent("confirm_modal_closed");
+    }
+
+    function confirmDonation() {
+      confirmedDonation = true;
+      closeConfirmModal();
+
+      document.getElementById("questionnaire").style.display = "block";
+      document.getElementById("questionnaire").scrollIntoView({ behavior: "smooth" });
+
+      saveEvent("donation_confirmed");
+    }
+
+    function resetChoice() {
+      selectedAmount = 100;
+      selectedPrivacy = "anonymous";
+      confirmedDonation = false;
+      questionnaireAnswers = {};
+
+      document.getElementById("customAmount").value = "";
+      document.getElementById("amountFeedback").textContent = "当前默认选择：¥100";
+
+      document.querySelectorAll(".chip").forEach(chip => {
+        chip.classList.remove("selected");
+        if (chip.dataset.privacy === "anonymous") {
+          chip.classList.add("selected");
+        }
+      });
+
+      renderAmountButtons();
+      saveEvent("choice_reset");
+    }
+
+    function renderQuestions() {
+      const questionList = document.getElementById("questionList");
+      questionList.innerHTML = "";
+
+      questions.forEach(q => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "question";
+
+        const title = document.createElement("p");
+        title.textContent = q.text;
+
+        const scale = document.createElement("div");
+        scale.className = "scale";
+
+        for (let i = 1; i <= 7; i++) {
+          const btn = document.createElement("button");
+          btn.textContent = i;
+          btn.dataset.question = q.id;
+          btn.dataset.value = i;
+          btn.onclick = () => selectScale(q.id, i, btn);
+          scale.appendChild(btn);
+        }
+
+        wrapper.appendChild(title);
+        wrapper.appendChild(scale);
+        questionList.appendChild(wrapper);
+      });
+    }
+
+    function selectScale(questionId, value, clickedButton) {
+      questionnaireAnswers[questionId] = value;
+
+      const buttons = document.querySelectorAll(`button[data-question="${questionId}"]`);
+      buttons.forEach(btn => btn.classList.remove("selected"));
+
+      clickedButton.classList.add("selected");
+
+      saveEvent("scale_answered");
+    }
+
+    function submitQuestionnaire() {
+      const unanswered = questions.filter(q => questionnaireAnswers[q.id] === undefined);
+
+      if (unanswered.length > 0) {
+        document.getElementById("questionnaireFeedback").textContent =
+          `还有 ${unanswered.length} 道题没有作答，请完成后再提交。`;
+        return;
+      }
+
+      const endTime = Date.now();
+      const timeSpentSeconds = Math.round((endTime - startTime) / 1000);
+
+      finalData = {
+        participant_id: generateParticipantId(),
+        timestamp: new Date().toISOString(),
+        condition_id: conditionId,
+        condition_name: condition.name,
+        amount_mode: condition.amountMode,
+        progress_mode: condition.progressMode,
+        selected_amount: selectedAmount,
+        privacy_choice: selectedPrivacy,
+        confirmed_donation: confirmedDonation ? 1 : 0,
+        time_spent_seconds: timeSpentSeconds,
+        donation_intention: questionnaireAnswers.donation_intention,
+        chosen_confidence: questionnaireAnswers.chosen_confidence,
+        perceived_impact: questionnaireAnswers.perceived_impact,
+        trust: questionnaireAnswers.trust,
+        empathy: questionnaireAnswers.empathy,
+        information_clarity: questionnaireAnswers.information_clarity,
+        perceived_manipulation: questionnaireAnswers.perceived_manipulation
+      };
+
+      document.getElementById("jsonPreview").textContent = JSON.stringify(finalData, null, 2);
+      document.getElementById("resultBox").style.display = "block";
+      document.getElementById("resultBox").scrollIntoView({ behavior: "smooth" });
+
+      saveEvent("questionnaire_submitted");
+    }
+
+    function generateParticipantId() {
+      return "P" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    }
+
+    function downloadCSV() {
+      if (!finalData) {
+        alert("请先提交问卷。");
+        return;
+      }
+
+      const headers = Object.keys(finalData);
+      const values = headers.map(key => csvEscape(finalData[key]));
+
+      const csv = [
+        headers.join(","),
+        values.join(",")
+      ].join("\n");
+
+      const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `donation_experiment_${finalData.participant_id}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      URL.revokeObjectURL(url);
+    }
+
+    function csvEscape(value) {
+      if (value === null || value === undefined) {
+        return "";
+      }
+
+      const str = String(value).replace(/"/g, '""');
+
+      if (str.includes(",") || str.includes("\n") || str.includes('"')) {
+        return `"${str}"`;
+      }
+
+      return str;
+    }
+
+    function restartExperiment() {
+      const newCondition = Math.floor(Math.random() * 4) + 1;
+      window.location.href = `${window.location.pathname}?c=${newCondition}`;
+    }
+
+    function scrollToDonate() {
+      document.getElementById("donateSection").scrollIntoView({ behavior: "smooth" });
+      saveEvent("scroll_to_donate");
+    }
+
+    function scrollToProof() {
+      document.getElementById("proofSection").scrollIntoView({ behavior: "smooth" });
+      saveEvent("scroll_to_proof");
+    }
+
+    function saveEvent(eventName) {
+      const event = {
+        event: eventName,
+        timestamp: new Date().toISOString(),
+        condition_id: conditionId,
+        selected_amount: selectedAmount,
+        privacy_choice: selectedPrivacy,
+        time_from_start_seconds: Math.round((Date.now() - startTime) / 1000)
+      };
+
+      const existing = JSON.parse(localStorage.getItem("donation_experiment_events") || "[]");
+      existing.push(event);
+      localStorage.setItem("donation_experiment_events", JSON.stringify(existing));
+    }
+
+    init();
+  </script>
+</body>
+</html>
